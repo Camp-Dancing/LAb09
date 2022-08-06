@@ -6,10 +6,10 @@ const regiment = (sequelize, DataTypes) => sequelize.define('Regiment', {
             allowNull: false,
           },
     references: {
-            cardioTime: 15,
-            stretchTime: 10
-          }
-         
+            exercise: 'exercise',
+            cardioTime: 'cardioTime',
+            stretchTime: 'stretchTime'
+          } 
 });
 
 module.exports = regiment;

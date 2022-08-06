@@ -5,10 +5,10 @@ const exercise = (sequelize, DataTypes) => sequelize.define('Exercise', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  runTime: {
+  cardioTime: {
     type: DataTypes.INTEGER,
   },
-  warmupTime: {
+  stretchTime: {
     type: DataTypes.INTEGER,
   }
 });
