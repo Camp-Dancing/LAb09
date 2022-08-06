@@ -2,12 +2,14 @@
 
 const regiment = (sequelize, DataTypes) => sequelize.define('Regiment', {
     DayId: {
-        type: DataTypes.STRING,
-        references: {
-          model: 'exercise',
-          key: 'id'
-        }
-      },
+            type: DataTypes.STRING,
+            allowNull: false,
+          },
+    references: {
+            cardioTime: 15,
+            stretchTime: 10
+          }
+         
 });
 
 module.exports = regiment;
