@@ -1,15 +1,11 @@
 'use strict';
 
 const regiment = (sequelize, DataTypes) => sequelize.define('Regiment', {
-    DayId: {
-            type: DataTypes.STRING,
-            allowNull: false,
-          },
-    references: {
-            exercise: 'exercise',
-            cardioTime: 'cardioTime',
-            stretchTime: 'stretchTime'
-          } 
+  DayId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+
 });
 
 module.exports = regiment;
