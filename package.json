@@ -4,6 +4,7 @@
   "description": "our lab 9 project",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "test"
   },
   "repository": {
