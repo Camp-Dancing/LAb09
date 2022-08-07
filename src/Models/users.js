@@ -2,8 +2,9 @@ const SECRET = process.env.SECRET;
 const HASH_STRENGTH = 10;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const { DataTypes } = require('sequelize');
 
-const userModel = (sequelize, DataTypes) => {
+const userModel = (sequelize) => {
   const model = sequelize.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
@@ -12,7 +13,7 @@ const userModel = (sequelize, DataTypes) => {
       type: DataTypes.VIRTUAL,
       get() {
         const payload = { username: this.username, role: this.role };
-        return jwt.sign(payload, SECRET, { expiresIn: process.env.JWTEXPIRE }  );
+        return jwt.sign(payload, SECRET, { expiresIn: process.env.JWTEXPIRE });
       },
     },
   });
