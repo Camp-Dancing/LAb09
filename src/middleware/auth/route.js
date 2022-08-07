@@ -1,18 +1,15 @@
-const { Users } = require('../../Models/users');
+const { userModel } = require('../../server');
 
-// const express = require('express');
 const bcrypt = require('bcrypt');
-
-// const router = express.Router();
 
 async function signupUser(req, res) {
   try {
     let obj = req.body;
-    const doesNameExists = await Users.model.findOne({
+    const doesNameExists = await userModel.findOne({
       where: { username: req.body.username },
     });
     if (doesNameExists === null) {
-      let newUsers = await Users.create(obj);
+      let newUsers = await userModel.create(obj);
       res.status(200).json(newUsers);
     } else {
       res.status(500).send(`cannot create user ${req.body.username}`);
@@ -24,7 +21,7 @@ async function signupUser(req, res) {
 
 async function signinUser(req, res) {
   try {
-    const user = await Users.model.findOne({
+    const user = await userModel.findOne({
       where: { username: req.body.username },
     });
 
