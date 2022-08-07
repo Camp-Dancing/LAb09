@@ -7,21 +7,24 @@ const logger = require('./middleware/logger');
 
 const express = require('express');
 const { signinUser, signupUser } = require('./middleware/auth/route');
+const userModel = require('./Models/users');
+const { Sequelize, DataTypes } = require('sequelize');
 
 const app = express();
+
+/// Database
+
+const db = new Sequelize('sqlite::memory:', {});
+
+const user = userModel(db, DataTypes);
 
 /// Middleware
 
 app.use(express.json());
 app.use(logger);
 
-// app.use(errorHandler);
-app.post('/signin', signinUser);
 app.put('/signup', signupUser);
-
-app.use('*', (req, res) => {
-  res.status(200).send('HelllllO');
-});
+app.post('/signin', signinUser);
 
 /// Routes
 app.use('*', (req, res) => {
