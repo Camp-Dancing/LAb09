@@ -8,7 +8,8 @@ const logger = require('./middleware/logger');
 const express = require('express');
 const { signinUser, signupUser } = require('./middleware/auth/route');
 const userModel = require('./Models/users');
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize } = require('sequelize');
+const Collection = require('./data');
 
 const app = express();
 
@@ -16,7 +17,8 @@ const app = express();
 
 const db = new Sequelize('sqlite::memory:', {});
 
-const user = userModel(db, DataTypes);
+const user = userModel(db);
+new Collection(app, user);
 
 /// Middleware
 
