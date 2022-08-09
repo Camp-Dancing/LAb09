@@ -10,10 +10,13 @@ const { signinUser, signupUser } = require('./middleware/auth/route');
 const userModel = require('./Models/users');
 const { Sequelize, DataTypes } = require('sequelize');
 const Collection = require('./data');
+const notFound = require('./error-handlers/404');
+const handleError = require('./error-handlers/500');
 
- const Exercise = require('./Models/exercise');
+
 
 const validateToken = require('./middleware/auth/auth');
+const exercise = require('./Models/exercise');
 
 const app = express();
 
@@ -22,7 +25,7 @@ const app = express();
 const db = new Sequelize('sqlite::memory:', {});
 
 
-
+const exerciseModel = exercise(db, DataTypes);
 userModel(db, DataTypes);
 
 
@@ -35,13 +38,14 @@ app.use(logger);
 
 app.use(validateToken);
 
+new Collection(exerciseModel, app);
+
 app.put('/signup', signupUser);
 app.post('/signin', signinUser);
 
 /// Routes
-app.use('*', (req, res) => {
-  res.status(200).send('HelllllO');
-});
+app.use('*', notFound);
+app.use(handleError);
 
 module.exports = {
   server: app,
