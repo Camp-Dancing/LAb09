@@ -10,6 +10,9 @@ const { signinUser, signupUser } = require('./middleware/auth/route');
 const userModel = require('./Models/users');
 const { Sequelize, DataTypes } = require('sequelize');
 const Collection = require('./data');
+
+ const Exercise = require('./Models/exercise');
+
 const validateToken = require('./middleware/auth/auth');
 
 const app = express();
@@ -18,7 +21,10 @@ const app = express();
 
 const db = new Sequelize('sqlite::memory:', {});
 
+
+
 userModel(db, DataTypes);
+
 
 /// Middleware
 
