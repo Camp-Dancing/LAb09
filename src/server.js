@@ -10,6 +10,7 @@ const { signinUser, signupUser } = require('./middleware/auth/route');
 const userModel = require('./Models/users');
 const { Sequelize } = require('sequelize');
 const Collection = require('./data');
+const validateToken = require('./middleware/auth/auth');
 
 const app = express();
 
@@ -20,13 +21,29 @@ const db = new Sequelize('sqlite::memory:', {});
 const user = userModel(db);
 new Collection(app, user);
 
+function requiresAccess(allowedRoles) {
+  return (req, res, next) => {
+    if (req.user && allowedRoles.includes(req.user.role)) {
+      next();
+    } else {
+      res.status(403).send('missing required roles for this action');
+    }
+  };
+}
+
 /// Middleware
 
 app.use(express.json());
 app.use(logger);
 
+/// auth
+
+app.use(validateToken);
+
 app.put('/signup', signupUser);
 app.post('/signin', signinUser);
+
+requiresAccess();
 
 /// Routes
 app.use('*', (req, res) => {
