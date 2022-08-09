@@ -18,18 +18,7 @@ const app = express();
 
 const db = new Sequelize('sqlite::memory:', {});
 
-const user = userModel(db);
-new Collection(app, user);
-
-function requiresAccess(allowedRoles) {
-  return (req, res, next) => {
-    if (req.user && allowedRoles.includes(req.user.role)) {
-      next();
-    } else {
-      res.status(403).send('missing required roles for this action');
-    }
-  };
-}
+userModel(db);
 
 /// Middleware
 
@@ -42,8 +31,6 @@ app.use(validateToken);
 
 app.put('/signup', signupUser);
 app.post('/signin', signinUser);
-
-requiresAccess();
 
 /// Routes
 app.use('*', (req, res) => {
