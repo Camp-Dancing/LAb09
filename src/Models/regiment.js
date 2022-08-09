@@ -5,7 +5,6 @@ const regiment = (sequelize, DataTypes) => sequelize.define('Regiment', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-
 });
 
 module.exports = regiment;
