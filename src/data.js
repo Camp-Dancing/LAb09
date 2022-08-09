@@ -4,10 +4,9 @@
  *Performs all necessary CRUD that our routes may want.
  */
 class Collection {
-  constructor(app, model) {
+  constructor(model) {
     this.model = model; // creates reference to the SQL model right?
     this.associations = new Map(); // our Map structure for a many-to-many relationship.
-    this.setupRoutes(app, model.name);
   }
 
   async create(obj, options) {
@@ -70,9 +69,6 @@ class Collection {
       [`${association.collection.model.name}Id`]: association.id,
     });
     return associatedModelData;
-  }
-  setupRoutes(app) {
-    app.get();
   }
 }
 
