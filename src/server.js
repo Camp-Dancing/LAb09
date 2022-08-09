@@ -8,23 +8,32 @@ const logger = require('./middleware/logger');
 const express = require('express');
 const { signinUser, signupUser } = require('./middleware/auth/route');
 const userModel = require('./Models/users');
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 const Collection = require('./data');
+
  const Exercise = require('./Models/exercise');
+
+const validateToken = require('./middleware/auth/auth');
+
 const app = express();
 
 /// Database
 
 const db = new Sequelize('sqlite::memory:', {});
 
-const user = userModel(db);
 
-new Collection(app, user);
+
+userModel(db, DataTypes);
+
 
 /// Middleware
 
 app.use(express.json());
 app.use(logger);
+
+/// auth
+
+app.use(validateToken);
 
 app.put('/signup', signupUser);
 app.post('/signin', signinUser);

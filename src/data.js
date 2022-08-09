@@ -4,9 +4,10 @@
  *Performs all necessary CRUD that our routes may want.
  */
 class Collection {
-  constructor(model) {
+  constructor(model, app) {
     this.model = model; // creates reference to the SQL model right?
     this.associations = new Map(); // our Map structure for a many-to-many relationship.
+    this.setupRoutes(app);
   }
 
   async create(obj, options) {
@@ -69,6 +70,39 @@ class Collection {
       [`${association.collection.model.name}Id`]: association.id,
     });
     return associatedModelData;
+  }
+  setupRoutes(app) {
+    const routeName = this.model.name.toLowerCase();
+    const requiresAccess = (allowedRoles) => {
+      return (req, res, next) => {
+        if (req.user && allowedRoles.includes(req.user.role)) {
+          next();
+        } else {
+          res.status(403).send('missing required roles for this action');
+        }
+      };
+    };
+
+    app.post(
+      `/${routeName}`,
+      requiresAccess(['writer', 'editor', 'admin']),
+      this.create.bind(this)
+    );
+    app.get(
+      `/${routeName}`,
+      requiresAccess(['user', 'writer', 'editor', 'admin']),
+      this.read.bind(this)
+    );
+    app.put(
+      `/${routeName}/:id`,
+      requiresAccess(['editor', 'admin']),
+      this.update.bind(this)
+    );
+    app.delete(
+      `/${routeName}/:id`,
+      requiresAccess(['admin']),
+      this.delete.bind(this)
+    );
   }
 }
 
