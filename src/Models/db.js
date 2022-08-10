@@ -41,6 +41,7 @@ const sequelizeOptions = {
   ...(process.env.NODE_ENV === 'production' ? secondProdSettings : {}),
 };
 
+
 /// yo whats up von
 /// in case DATABASE_URL doesn't exit (aka you didn't set an environment variable)
 /// we have a fallback to switch to memory, and we stuck it in a function to
@@ -54,6 +55,8 @@ const sequelize = new Sequelize(DATABASE_URL || fallback(), sequelizeOptions);
 
 const userModel = userSchema(sequelize, DataTypes);
 const exerciseModel = exerciseSchema(sequelize, DataTypes);
+
+
 
 module.exports = {
   db: sequelize,
