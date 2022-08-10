@@ -17,22 +17,21 @@ const { exerciseModel, userModel } = require('./Models/db');
 
 const app = express();
 
+/// Middleware
 
 app.use(express.json());
 app.use(logger);
-
-
 app.use(validateToken);
 
+/// Routes
+
+app.post('/signup', signupUser);
+app.post('/signin', signinUser);
 
 new Collection(exerciseModel, app);
 new Collection(userModel, app);
 
-app.put('/signup', signupUser);
-app.post('/signin', signinUser);
-
-/// Routes
-app.use('*', notFound);
+app.use(notFound);
 app.use(handleError);
 
 module.exports = {
