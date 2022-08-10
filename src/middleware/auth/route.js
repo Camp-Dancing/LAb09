@@ -1,30 +1,32 @@
-const { Users } = require('../../Models/users');
+const { userModel } = require('../../Models/db');
 
-// const express = require('express');
 const bcrypt = require('bcrypt');
 
-// const router = express.Router();
-
+/// endpoint, takes a sent request body and turns it into a new User model, aka a new account
+/// for someone to use with our API!
 async function signupUser(req, res) {
   try {
     let obj = req.body;
-    const doesNameExists = await Users.model.findOne({
+    const doesNameExists = await userModel.findOne({
       where: { username: req.body.username },
     });
-    if (doesNameExists === null) {
-      let newUsers = await Users.create(obj);
+    if (!doesNameExists) {
+      let newUsers = await userModel.create(obj);
       res.status(200).json(newUsers);
     } else {
-      res.status(500).send(`cannot create user ${req.body.username}`);
+      res.status(500).send(`User ${req.body.username} already exists.`);
     }
   } catch (e) {
     console.log(e);
   }
 }
 
+/// endpoint, takes a username and password in the req body
+/// if the password is correct, returns your token in an object.
+/// your token is what you use to bearer authorize other actions
 async function signinUser(req, res) {
   try {
-    const user = await Users.model.findOne({
+    const user = await userModel.findOne({
       where: { username: req.body.username },
     });
 
@@ -36,14 +38,7 @@ async function signinUser(req, res) {
   } catch (e) {
     res.status(500);
   }
-  res
-    .status(403)
-    .send(
-      "Invalid username/pasword. Too bad we don't have an account recovery mechanism"
-    );
-  // }
-  // router.post('/signup', signupUser);
-  // router.post('/signin', signinUser);
+  res.status(403).send('Invalid username/password.');
 }
 
 module.exports = {
