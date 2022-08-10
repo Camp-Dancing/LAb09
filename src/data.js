@@ -5,7 +5,6 @@
  */
 class Collection {
   constructor(model, app) {
-    
     this.model = model; // creates reference to the SQL model right?
     this.associations = new Map(); // our Map structure for a many-to-many relationship.
     this.setupRoutes(app);
