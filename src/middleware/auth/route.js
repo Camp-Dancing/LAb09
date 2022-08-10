@@ -1,4 +1,4 @@
-const { userModel } = require('../../server');
+const { userModel } = require('../../Models/db');
 
 const bcrypt = require('bcrypt');
 

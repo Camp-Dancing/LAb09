@@ -3,7 +3,7 @@ const HASH_STRENGTH = 10;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
-const userModel = (sequelize, DataTypes) => {
+const userSchema = (sequelize, DataTypes) => {
   const model = sequelize.define('User', {
     username: { type: DataTypes.STRING, allowNull: false, unique: true },
     password: { type: DataTypes.STRING, allowNull: false },
@@ -26,4 +26,4 @@ const userModel = (sequelize, DataTypes) => {
   return model;
 };
 
-module.exports = userModel;
+module.exports =  userSchema;
