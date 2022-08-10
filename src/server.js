@@ -14,6 +14,7 @@ const notFound = require('./error-handlers/404');
 const handleError = require('./error-handlers/500');
 const validateToken = require('./middleware/auth/auth');
 const { exerciseModel, userModel } = require('./Models/db');
+const { db } = require('./Models/db');
 
 const app = express();
 
@@ -37,10 +38,12 @@ app.use(handleError);
 module.exports = {
   server: app,
 
-  start: (port) => {
+  start: async (port) => {
     if (!port) {
       throw new Error('Missing Port');
     }
+    // console.log(db);
+    await db.sync();
     app.listen(port, () => console.log(`Listening on ${port}`));
   },
 };
