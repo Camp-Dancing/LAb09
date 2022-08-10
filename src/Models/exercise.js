@@ -3,7 +3,7 @@
 /// Exports a function that, when called, defines a new exercise
 const exerciseSchema = (sequelize, DataTypes) => {
   return sequelize.define('Exercise', {
-    exercise: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
     },

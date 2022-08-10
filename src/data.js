@@ -10,43 +10,54 @@ class Collection {
     this.setupRoutes(app);
   }
 
-  async create(obj, options) {
+  async create(req, res) {
     // create the new model
-    let data = await this.model.create(obj);
-
-    if (options) {
-      if (options.association) this.createAssociate(data, options.association);
+    try {
+      let data = await this.model.create(req.body);
+      res.status(200).send(data);
+    } catch (error) {
+      res.status(500).send(error.message);
     }
-    return data;
   }
 
-  async read(id) {
-    let options = { include: [...this.associations.keys()] };
+  async read(req, res) {
+    const options = { include: [...this.associations.keys()] };
     let datas = null;
 
-    if (id) {
-      options['where'] = { id };
+    if (req.params.id) {
+      options['where'] = { id: req.params.id };
+
       datas = await this.model.findOne(options);
     } else {
       datas = await this.model.findAll(options);
     }
 
-    return datas;
+    res.status(200).send(datas);
   }
 
-  async update(id, obj) {
-    if (!id) throw new Error('No data id provided');
-
-    let data = await this.model.findOne({ where: { id } });
-    let updatedData = await data.update(obj);
-    return updatedData;
+  async update(req, res) {
+    try {
+      let data = await this.model.findOne({ where: { id: req.params.id } });
+      let updatedData = await data.update(req.body);
+      res.status(200).send(updatedData);
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
   }
 
-  async delete(id) {
-    if (!id) throw new Error('No data ID provided');
-
-    let deletedData = await this.model.destroy({ where: { id } });
-    return deletedData;
+  async delete(req, res) {
+    try {
+      const deleted = await this.model.destroy({
+        where: { id: req.params.id },
+      });
+      if (!deleted) {
+        res.status(404).send(`could not find id ${req.params.id}`);
+      } else {
+        res.status(200).send(`deleted id ${req.params.id}`);
+      }
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
   }
 
   belongsToManyThrough(collection, model) {
@@ -78,26 +89,38 @@ class Collection {
         if (req.user && allowedRoles.includes(req.user.role)) {
           next();
         } else {
-          res.status(403).send('missing required roles for this action');
+          let why = 'missing required roles for this action';
+          if (req.user) {
+            why += ', you are only a ' + req.user.role;
+          }
+          res.status(403).send(why);
         }
       };
     };
-
+    //C
     app.post(
       `/${routeName}`,
       requiresAccess(['writer', 'editor', 'admin']),
       this.create.bind(this)
     );
+    //R
     app.get(
       `/${routeName}`,
       requiresAccess(['user', 'writer', 'editor', 'admin']),
       this.read.bind(this)
     );
+    app.get(
+      `/${routeName}/:id`,
+      requiresAccess(['user', 'writer', 'editor', 'admin']),
+      this.read.bind(this)
+    );
+    //U
     app.put(
       `/${routeName}/:id`,
       requiresAccess(['editor', 'admin']),
       this.update.bind(this)
     );
+    //D
     app.delete(
       `/${routeName}/:id`,
       requiresAccess(['admin']),
