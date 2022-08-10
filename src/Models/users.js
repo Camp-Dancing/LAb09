@@ -1,3 +1,4 @@
+require('dotenv').config();
 const SECRET = process.env.SECRET;
 const HASH_STRENGTH = 10;
 const jwt = require('jsonwebtoken');
@@ -19,7 +20,9 @@ const userSchema = (sequelize, DataTypes) => {
         /// and then encrypts it so it can work as an authorization method
         /// (because you needed your username and your password to get the token)
         const payload = { username: this.username, role: this.role };
-        return jwt.sign(payload, SECRET, { expiresIn: process.env.JWTEXPIRE });
+        return jwt.sign(payload, SECRET, {
+          expiresIn: process.env.JWTEXPIRE || 86400,
+        });
       },
     },
   });
@@ -27,7 +30,11 @@ const userSchema = (sequelize, DataTypes) => {
   model.beforeCreate(async (user) => {
     let hashedPassword = await bcrypt.hash(user.password, HASH_STRENGTH);
     user.password = hashedPassword;
-    user.role = 'admin';
+  });
+
+  model.afterCreate(async (user) => {
+    user.role = user.id === 1 ? 'admin' : 'user';
+    await user.save();
   });
 
   return model;
